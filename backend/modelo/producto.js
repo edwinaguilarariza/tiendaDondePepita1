@@ -7,6 +7,7 @@ let productoSchema = Schema({
   nombre: String,
   descripcion: String,
   precio: Number,
+  imagen: String,
 });
 // Se exporta el modulo
 module.exports = mongoose.model("producto", productoSchema);

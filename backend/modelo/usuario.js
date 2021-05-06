@@ -12,6 +12,7 @@ let usuarioSchema = Schema({
     correo: String,
     pass: String,
     rol: String,
+    fechaRegistro: {type: Date, default: Date.now}
     
 });
 //exportaqmos el modelo usuario 

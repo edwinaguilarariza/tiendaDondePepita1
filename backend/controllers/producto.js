@@ -1,28 +1,54 @@
 let Producto = require("../modelo/producto");
+let fs = require("fs");
+let path = require("path");
+let moment = require("moment");
 
 const registrarProducto = (req, res) => {
     //obtenemos los datos del json
     let params = req.body;
     //creamos nueva instacia de categoria
     let producto = new Producto();
-    //guardamos los datos del req en la coleccion
-    producto.nombre = params.nombre;
-    producto.descripcion = params.descripcion;
-    producto.precio = params.precio;
-    //save guardamos la info en mongo db
-    producto.save((err, saveProducto) => {
-        //si llega un error desde el servidor de mongo
-        if (err) {//porque solo es true
-            res.status(500).send({mensaje: "error al conectar al servidor"});
-        } else {
-            if (saveProducto) {
-                res.status(200).send({producto: saveProducto});
+
+    if (params.nombre &&
+        params.descripcion &&
+        params.precio 
+    ) {
+        let imagenPath = req.files.imagen.path;
+        let nameImg = moment().unix();
+        let rutaServer = "./uploads/imgproducto/" + nameImg + path.extname(imagenPath);
+        fs.createReadStream(imagenPath).pipe(fs.createWriteStream(rutaServer));
+        let dbImg = nameImg + path.extname(imagenPath);
+    
+        producto.nombre = params.nombre;
+        producto.descripcion = params.descripcion;
+        producto.precio = params.precio;
+        producto.imagen = dbImg;
+        
+        producto.save((err, datosProducto) => {
+            //si llega un error desde el servidor de mongo
+            if (err) {//porque solo es true
+                res.status(500).send({mensaje: "error al conectar al servidor"});
             } else {
-                res.status(401).send({mensaje: "no se puedo registrar la producto"})
+                if (datosProducto) {
+                    res.status(200).send({producto: datosProducto});
+                } else {
+                    res.status(401).send({mensaje: "no se puedo registrar la producto"})
+                }
             }
-        }
-    });
-  };
+        });
+        
+    } else {
+        res.status(401).send({mensaje: "faltan algunos de los datos"})
+    }
+};
+    
+
+    
+    
+
+
+
+
   
   const buscarProducto = (req, res) => {
     //obtenemos el id de la categoria

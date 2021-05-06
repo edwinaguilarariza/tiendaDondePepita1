@@ -8,6 +8,6 @@ let api = express.Router();
 
 
 api.post("/usuario/registrarUsuario", Usuario.registrarUsuario);
-api.post("/usuario/login", Usuario.login);
+api.post("/login", Usuario.login);
 
 module.exports = api;  
